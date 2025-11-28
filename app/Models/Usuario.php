@@ -4,14 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Laravel\Sanctum\HasApiTokens;
 
 class Usuario extends Model
 {
-    use HasFactory;
+    use HasApiTokens;
 
     protected $table = 'Usuario';
     protected $primaryKey = 'id_usuario';
-    public $timestamps = true;
+    public $timestamps = false;
 
     protected $fillable = [
         'nome',
@@ -30,5 +34,20 @@ class Usuario extends Model
     protected function setKeysForSaveQuery($query)
     {
         return $query->where('id_usuario', $this->getKey());
+    }
+
+    public function rol(): BelongsTo
+    {
+        return $this->belongsTo(RolUsuario::class, 'id_rol', 'id_rol');
+    }
+
+    public function administrador(): HasOne
+    {
+        return $this->hasOne(Administrador::class, 'usuario_id', 'id_usuario');
+    }
+
+    public function reservas(): HasMany
+    {
+        return $this->hasMany(Reserva::class, 'id_usuario', 'id_usuario');
     }
 }

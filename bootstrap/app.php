@@ -11,21 +11,28 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Middleware global (para todas las rutas)
+        // Alias para usar cors en rutas individuales si quieres
         $middleware->alias([
-            'cors' => \Illuminate\Http\Middleware\HandleCors::class,  // ← Alias para CORS
+            'cors' => \Illuminate\Http\Middleware\HandleCors::class,
         ]);
 
-        // Aplicar CORS a todas las rutas API
+        // 1. CORS en todas las rutas API (necesario)
         $middleware->api(prepend: [
-            \Illuminate\Http\Middleware\HandleCors::class,  // ← CORS PRIMERO en API
+            \Illuminate\Http\Middleware\HandleCors::class,
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class
         ]);
 
-        // Opcional: CORS global si lo necesitas en web también
-        $middleware->web(append: [
-            \Illuminate\Http\Middleware\HandleCors::class,
+        // 2. ESTO ES LO QUE FALTABA: Sanctum en TODAS las peticiones (web + api)
+        $middleware->append([
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
+
+        // Opcional: también puedes ponerlo solo en web si prefieres
+        // $middleware->web(append: [
+        //     \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        // ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->create();
