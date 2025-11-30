@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Usuario;
@@ -16,12 +16,12 @@ class UsuarioController extends Controller
     {
         $request->validate([
             'correo' => 'required|email',
-            'contrasinal' => 'required'
+            'password' => 'required'
         ]);
 
         $user = Usuario::where('correo', $request->correo)->first();
 
-        if (!$user || !Hash::check($request->contrasinal, $user->contrasinal)) {
+        if (!$user || !Hash::check($request->password, $user->contrasinal)) {
             throw ValidationException::withMessages([
                 'correo' => ['As credenciais son incorrectas.'],
             ]);
@@ -46,7 +46,7 @@ class UsuarioController extends Controller
             'apelidos' => 'required|string|max:100',
             'correo' => 'required|email|max:100|unique:Usuario,correo',
             'telefono' => 'nullable|string|size:9|regex:/^[6-9][0-9]{8}$/',
-            'contrasinal' => [
+            'password' => [
                 'required',
                 'confirmed',
                 'string',
@@ -64,10 +64,10 @@ class UsuarioController extends Controller
             'correo.max' => 'O correo non pode ter máis de 100 caracteres',
             'telefono.size' => 'O teléfono debe ter exactamente 9 díxitos',
             'telefono.regex' => 'O teléfono debe comezar por 6, 7, 8 ou 9',
-            'contrasinal.required' => 'O contrasinal é obrigatorio',
-            'contrasinal.confirmed' => 'Os contrasinais non coinciden',
-            'contrasinal.min' => 'O contrasinal debe ter polo menos 8 caracteres',
-            'contrasinal.regex' => 'O contrasinal debe ter maiúscula, minúscula, número e símbolo'
+            'password.required' => 'O contrasinal é obrigatorio',
+            'password.confirmed' => 'Os contrasinais non coinciden',
+            'password.min' => 'O contrasinal debe ter polo menos 8 caracteres',
+            'password.regex' => 'O contrasinal debe ter maiúscula, minúscula, número e símbolo'
         ]);
 
         if ($validator->fails()) {
@@ -78,7 +78,7 @@ class UsuarioController extends Controller
             'nome' => $request->nome,
             'apelidos' => $request->apelidos,
             'correo' => $request->correo,
-            'contrasinal' => Hash::make($request->contrasinal),
+            'contrasinal' => Hash::make($request->password),
             'telefono' => $request->telefono,
             'id_rol' => 2 // 2 = Usuario normal (crearás este rol después)
         ]);

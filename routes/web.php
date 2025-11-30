@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\UsuarioController;
-use App\Http\Controllers\Api\InstalacionController;
-use App\Http\Controllers\Api\TipoInstalacionController;
-use App\Http\Controllers\Api\ReservaController;
+use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\InstalacionController;
+use App\Http\Controllers\TipoInstalacionController;
+use App\Http\Controllers\ReservaController;
 
 Route::prefix('api')
     ->withoutMiddleware(['web']) // desactiva todo el middleware web, incluido CSRF
